@@ -7,7 +7,7 @@
 //
 
 public class WKWebViewJSBridgePublish {
-    private var bridge: WKWebViewJSBridge!
+    private weak var bridge: WKWebViewJSBridge?
     private weak var observerActive: NSObjectProtocol?
     private weak var observerBackground: NSObjectProtocol?
 
@@ -17,13 +17,13 @@ public class WKWebViewJSBridgePublish {
     }
 
     fileprivate func initBinds() {
-        observerActive = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: nil) { (_) in
-            self.bridge.call(handlerName: "appStatus", data: ["status": "1"]) {  (_) in
+        observerActive = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: nil) {[weak self] (_) in
+            self?.bridge?.call(handlerName: "appStatus", data: ["status": "1"]) {  (_) in
             }
         }
 
-        observerBackground = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidEnterBackground, object: nil, queue: nil) { (_) in
-            self.bridge.call(handlerName: "appStatus", data: ["status": "0"]) {  (_) in
+        observerBackground = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidEnterBackground, object: nil, queue: nil) { [weak self](_) in
+            self?.bridge?.call(handlerName: "appStatus", data: ["status": "0"]) {  (_) in
             }
         }
     }
